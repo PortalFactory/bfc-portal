@@ -19,6 +19,8 @@ lunar-tilesheet.png
 christmas-tilesheet.png
 halloween.png
 /tiled/*.tiled-session
+/public/tileset.png
+/public/tileset-extruded.png
 
 # misc
 .DS_Store
