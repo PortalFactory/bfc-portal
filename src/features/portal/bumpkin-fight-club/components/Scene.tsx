@@ -1,8 +1,16 @@
 import { SQUARE_WIDTH } from "features/game/lib/constants";
 import { SceneId } from "features/world/mmoMachine";
 import { BaseScene } from "features/world/scenes/BaseScene";
+import { npcModalManager } from "features/world/ui/NPCModals";
+import { Player } from "features/world/types/Room";
+import { interactableModalManager } from "features/world/ui/InteractableModals";
+import { BumpkinContainer } from "features/world/containers/BumpkinContainer";
+import { NPCName } from "lib/npcs";
+import { hasFeatureAccess } from "lib/flags";
 
 import mapJson from "assets/bumpkin-fight-club/map.json";
+
+import { playerModalManager } from "./PlayerModal";
 
 export class PortalScene extends BaseScene {
   sceneId: SceneId = "bumpkin_fight_club";
@@ -64,5 +72,146 @@ export class PortalScene extends BaseScene {
     const playerY = y / SQUARE_WIDTH;
 
     this.updatePlayer();
+  }
+
+  createPlayer({
+    x,
+    y,
+    farmId,
+    username,
+    isCurrentPlayer,
+    clothing,
+    npc,
+    experience = 0,
+  }: {
+    isCurrentPlayer: boolean;
+    x: number;
+    y: number;
+    farmId: number;
+    username?: string;
+    clothing: Player["clothing"];
+    npc?: NPCName;
+    experience?: number;
+  }): BumpkinContainer {
+    const defaultClick = () => {
+      const distance = Phaser.Math.Distance.BetweenPoints(
+        entity,
+        this.currentPlayer as BumpkinContainer
+      );
+
+      if (distance > 50) {
+        entity.speak("You are too far away");
+        return;
+      }
+
+      if (npc) {
+        npcModalManager.open(npc);
+      } else {
+        if (farmId !== this.id) {
+          playerModalManager.open({
+            id: farmId,
+            clothing,
+            experience,
+          });
+        }
+      }
+    };
+
+    const entity = new BumpkinContainer({
+      scene: this,
+      x,
+      y,
+      clothing,
+      name: npc,
+      onClick: defaultClick,
+    });
+
+    if (!npc) {
+      const nameTag = this.createPlayerText({
+        x: 0,
+        y: 0,
+        text: username ? username : `#${farmId}`,
+      });
+      nameTag.name = "nameTag";
+      entity.add(nameTag);
+    }
+
+    // Is current player
+    if (isCurrentPlayer) {
+      this.currentPlayer = entity;
+
+      // (this.currentPlayer.body as Phaser.Physics.Arcade.Body).width = 10;
+      (this.currentPlayer.body as Phaser.Physics.Arcade.Body)
+        .setOffset(3, 10)
+        .setSize(10, 8)
+        .setCollideWorldBounds(true);
+
+      (this.currentPlayer.body as Phaser.Physics.Arcade.Body).setAllowRotation(
+        false
+      );
+
+      // Follow player with camera
+      this.cameras.main.startFollow(this.currentPlayer);
+
+      // Callback to fire on collisions
+      this.physics.add.collider(
+        this.currentPlayer,
+        this.colliders as Phaser.GameObjects.Group,
+        // Read custom Tiled Properties
+        async (obj1, obj2) => {
+          const id = (obj2 as any).data?.list?.id;
+
+          // See if scene has registered any callbacks to perform
+          const cb = this.onCollision[id];
+          if (cb) {
+            cb(obj1, obj2);
+          }
+
+          // Change scenes
+          const warpTo = (obj2 as any).data?.list?.warp;
+          if (
+            warpTo &&
+            (warpTo !== "beach" || hasFeatureAccess(this.gameState, "BEACH"))
+          ) {
+            this.currentPlayer?.stopSpeaking();
+            this.cameras.main.fadeOut(1000);
+
+            this.cameras.main.on(
+              "camerafadeoutcomplete",
+              () => {
+                this.switchToScene = warpTo;
+              },
+              this
+            );
+          }
+
+          const interactable = (obj2 as any).data?.list?.open;
+          if (interactable) {
+            interactableModalManager.open(interactable);
+          }
+        }
+      );
+
+      this.physics.add.overlap(
+        this.currentPlayer,
+        this.triggerColliders as Phaser.GameObjects.Group,
+        (obj1, obj2) => {
+          // You can access custom properties of the trigger object here
+          const id = (obj2 as any).data?.list?.id;
+
+          // See if scene has registered any callbacks to perform
+          const cb = this.onCollision[id];
+          if (cb) {
+            cb(obj1, obj2);
+          }
+        }
+      );
+    } else {
+      (entity.body as Phaser.Physics.Arcade.Body)
+        .setSize(16, 20)
+        .setOffset(0, 0);
+    }
+
+    return entity;
   }
 }

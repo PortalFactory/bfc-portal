@@ -84,10 +84,10 @@ export abstract class BaseScene extends Phaser.Scene {
 
   public joystick?: VirtualJoystick;
   private sceneTransitionData?: SceneTransitionData;
-  private switchToScene?: SceneId;
   private options: Required<BaseSceneOptions>;
 
   public map: Phaser.Tilemaps.Tilemap = {} as Phaser.Tilemaps.Tilemap;
+  public switchToScene?: SceneId;
 
   currentPlayer: BumpkinContainer | undefined;
   isFacingLeft = false;

@@ -9,6 +9,7 @@ import { InteractableModals } from "features/world/ui/InteractableModals";
 
 import { PortalContext } from "../lib/Provider";
 import { PortalScene } from "./Scene";
+import { PlayerModal } from "./PlayerModal";
 
 export const Phaser: React.FC = () => {
   const { portalService } = useContext(PortalContext);
@@ -77,6 +78,7 @@ export const Phaser: React.FC = () => {
   return (
     <div>
       <div id="game-content" />
+      <PlayerModal />
       <InteractableModals id={portalState.context.id} />
     </div>
   );
