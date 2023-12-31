@@ -28,7 +28,6 @@ export interface Context {
   id: number;
   jwt: string;
   state: GameState;
-  bumpkinPower: number;
   mmoServer?: Room<PlazaRoomState>;
 }
 
@@ -62,6 +61,7 @@ export type MachineInterpreter = Interpreter<
 export type PortalMachineState = State<Context, PortalEvent, PortalState>;
 
 export const portalMachine = createMachine({
+  /** @xstate-layout N4IgpgJg5mDOIC5QAcD2AnALgQwDYFlsBjACwEsA7MAOkrMzLzNkqgGIBtABgF1EVULBqgr8QAD0QBGAOwAWagDYAHPOUBWOQE5F6nZoA0IAJ6I5yxdQBMV3YsUyAzFyl6rAX3dG0WPIVKUNHQMTCwU7BxSfEggaEJkImKSCLIKKmqa+vpyRqYI6irWtuoyio5aWlxa2p7eGDgExORUtBSY6KgQAK5EwhScvGJx9AmiMcnKVjLUjnqOilzaujoyuYhlClyl6pNZUvO1sfV+TYGt7Z09fZxRQ4IjieOIk9OzWvOLWQ5rCOUK8o4rJMuGVlFwrItDj4Gv5mkE2h1ur1RpwrNEBPFHqAJlMZnMFks9N8TIh1FxlNY5IDFFZ1FY5No5IoocdGgEWrhUNgIKw2BARPCAG6oADWNGhJ3ZNE53NYCEowqI2D63B4qrumLG2NJLmocxkZK4RuNIJ+6j01BNUi08i2VPULN8bLh1BlPPCbDA6A66GoyFwyoAZhgALZ+1mws5uuUK1BKlW8dUxYZ9JI6qR694Gk0mxRmqQZw0ueY23SqR0w04tdBdXBwNgAYQA8gA5AAqAEkWwBVACiSYxDy1EmedMtMjBpV06kB1rNykceu2Fj0skUTIrkpd6DA3OMjYAMgBBDv4AdHTVplKuSxSKrlLSyKyOcpWH7KDPaCpaEqKLTKOQQRkTdnTOIgAzIENeX5FpYzFcMnUjFpwOwSCYwoRVlVGVVzxTUYrzJQssyLHM8xJBAISsSlv3KApHzpECkJoFC0I9L0fT9ANMGDdAwwlUDkIgqDwnlDC4ywkQcMGZN7lTJ58l1fUSNzH5HCkSwbDsG11FkFwCkYqtmNQEN-TATBIEbVtOx7ftpMHOTtWvWklHvMkXnsKRVI0SlqUcJw1ILB0vCORDDOodiMDYAAlXs2yigBNXDZPw+TNApEF6UqF873XHJyPmRcZGKA0ZGqCcymZQ4KE6OA7lCqUNSHK8AFoyLyZr1Gob8dC2a1qmUaogrqeqXWCRhcGYVhGockcEDkN9yPMDNSxKcoPwsKohpCyspXORErhS+zDtm+wtGoeQKjBewrCkIFlHnLhzuKHYHCmW7lAM3bo3CabjuSF9phnW7AOykEGTNeauu2TR1zWm1Pu3Wtapky95IqBQbtUZxrve+7yJpSwAVsFwtmJ4Dgv4pjqB3PdfqxWbbpkaZsyNcxHAZFQfiWagLBeJkcvXEEEbAoSppRpr5JfKigfpLhQdyn5rWmFbZmxgsNDkYXkOM0zzIgOnh2SdHrCkLGQRpXGvM6onyXkO9NYpiMwoi9ADavU7zq-K6Lbus0jR57M1JsYmmUq4adpdLoKGwLpMBIDBmEgN3Jb8vUg5BtSwbyvJzAUORticf9TYWH9PE8IA */
   id: "portalMachine",
   initial: "initialising",
   context: {
@@ -130,7 +130,6 @@ export const portalMachine = createMachine({
           let mmoServer: Room<PlazaRoomState> | undefined;
           const serverName = getServer() ?? "main";
           const mmoUrl = CONFIG.ROOM_URL;
-          let bumpkinPower = 0;
 
           if (serverName && mmoUrl) {
             const client = new Client(mmoUrl);
@@ -141,12 +140,9 @@ export const portalMachine = createMachine({
               farmId,
               experience: game.bumpkin?.experience ?? 0,
             });
-
-            // TODO get power from BE
-            bumpkinPower = 100;
           }
 
-          return { game, mmoServer, farmId, bumpkinPower };
+          return { game, mmoServer, farmId };
         },
         onDone: [
           {
@@ -154,7 +150,6 @@ export const portalMachine = createMachine({
             actions: assign({
               state: (_: any, event) => event.data.game,
               mmoServer: (_: any, event) => event.data.mmoServer,
-              bumpkinPower: (_: any, event) => event.data.bumpkinPower,
               id: (_: any, event) => event.data.farmId,
             }),
           },

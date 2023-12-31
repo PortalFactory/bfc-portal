@@ -1,4 +1,3 @@
-import { SQUARE_WIDTH } from "features/game/lib/constants";
 import { SceneId } from "features/world/mmoMachine";
 import { BaseScene } from "features/world/scenes/BaseScene";
 import { npcModalManager } from "features/world/ui/NPCModals";
@@ -11,6 +10,7 @@ import { hasFeatureAccess } from "lib/flags";
 import mapJson from "assets/bumpkin-fight-club/map.json";
 
 import { playerModalManager } from "./PlayerModal";
+import { playerPowerManager } from "./Power";
 
 export class PortalScene extends BaseScene {
   sceneId: SceneId = "bumpkin_fight_club";
@@ -58,20 +58,23 @@ export class PortalScene extends BaseScene {
     }
   }
 
-  update() {
-    this.updateOtherPlayers();
+  update(time: number, delta: number) {
+    super.update(time, delta);
 
-    if (!this.currentPlayer?.body) {
-      return;
-    }
+    this.updatePower();
+  }
 
-    const x = this.currentPlayer?.x ?? 0;
-    const y = this.currentPlayer?.y ?? 0;
+  updatePower() {
+    if (!this.mmoServer) return;
 
-    const playerX = x / SQUARE_WIDTH;
-    const playerY = y / SQUARE_WIDTH;
-
-    this.updatePlayer();
+    this.mmoServer.state.players.forEach((player, sessionId) => {
+      if (this.playerEntities[sessionId]) {
+        this.playerEntities[sessionId].power = player.power;
+      } else if (sessionId === this.mmoServer.sessionId && this.currentPlayer) {
+        this.currentPlayer.power = player.power;
+        playerPowerManager.set(player.power);
+      }
+    });
   }
 
   createPlayer({

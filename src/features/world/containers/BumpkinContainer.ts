@@ -28,6 +28,7 @@ export class BumpkinContainer extends Phaser.GameObjects.Container {
   public speech: SpeechBubble | undefined;
   public reaction: Phaser.GameObjects.Sprite | undefined;
   public invincible = false;
+  public power = 0;
 
   public clothing: Player["clothing"];
   private ready = false;

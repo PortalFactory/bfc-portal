@@ -22,6 +22,7 @@ export interface Player extends Schema {
   npc: NPCName;
   sceneId: SceneId;
   moderation: Moderation;
+  power: number;
 
   inputQueue: InputData[];
 }

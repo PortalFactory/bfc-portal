@@ -25,7 +25,7 @@ export const Hud: React.FC = () => {
           aria-label="Hud"
           className="absolute z-40"
         >
-          <Power power={portalState.context.bumpkinPower} />
+          <Power />
           <BumpkinAvatar bumpkin={portalState.context.state.bumpkin} />
           <Balance balance={portalState.context.state.balance} />
           <BlockBucks
