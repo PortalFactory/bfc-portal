@@ -25,8 +25,8 @@ export class PortalScene extends BaseScene {
       },
       player: {
         spawn: {
-          x: 240,
-          y: 255,
+          x: 265,
+          y: 830,
         },
       },
       audio: { fx: { walk_key: "dirt_footstep" } },
