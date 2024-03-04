@@ -79,7 +79,10 @@ export const Phaser: React.FC = () => {
     <div>
       <div id="game-content" />
       <PlayerModal />
-      <InteractableModals id={portalState.context.id} />
+      <InteractableModals
+        scene="bumpkin_fight_club"
+        id={portalState.context.id}
+      />
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Modal } from "react-bootstrap";
 
+import { Modal } from "components/ui/Modal";
 import { CloseButtonPanel } from "features/game/components/CloseablePanel";
 import { LeaderboardButton } from "features/game/expansion/components/leaderboard/LeaderboardButton";
 import { TicketTable } from "features/game/expansion/components/leaderboard/TicketTable";
@@ -53,7 +53,7 @@ export const Leaderboard: React.FC<Props> = ({ farmId }) => {
         onClick={data ? handleOpen : undefined}
       />
       {data && (
-        <Modal show={showLeaderboard} onHide={handleClose} centered>
+        <Modal show={showLeaderboard} onHide={handleClose}>
           <CloseButtonPanel
             onClose={handleClose}
             tabs={[
@@ -73,7 +73,7 @@ export const Leaderboard: React.FC<Props> = ({ farmId }) => {
                 {data.farmRankingDetails && (
                   <>
                     <div className="flex justify-center items-center">
-                      <p className="mb-[13px]">...</p>
+                      <p className="mb-[13px]">{"..."}</p>
                     </div>
                     <TicketTable
                       showHeader={false}

@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { useActor } from "@xstate/react";
-import { Modal } from "react-bootstrap";
+
+import { Modal } from "components/ui/Modal";
 import { Panel } from "components/ui/Panel";
 import { Button } from "components/ui/Button";
 import { Label } from "components/ui/Label";
@@ -32,7 +33,7 @@ const BumpkinFightClub: React.FC = () => {
   return (
     <div>
       {portalState.matches("error") && (
-        <Modal centered show>
+        <Modal show>
           <Panel>
             <div className="p-2">
               <Label type="danger">{t("error")}</Label>
@@ -46,7 +47,7 @@ const BumpkinFightClub: React.FC = () => {
       )}
 
       {portalState.matches("loading") && (
-        <Modal centered show>
+        <Modal show>
           <Panel>
             <span className="loading">{t("loading")}</span>
           </Panel>
@@ -54,7 +55,7 @@ const BumpkinFightClub: React.FC = () => {
       )}
 
       {portalState.matches("unauthorised") && (
-        <Modal centered show>
+        <Modal show>
           <Panel>
             <div className="p-2">
               <Label type="danger">{t("error")}</Label>
@@ -66,7 +67,7 @@ const BumpkinFightClub: React.FC = () => {
       )}
 
       {portalState.matches("idle") && (
-        <Modal centered show>
+        <Modal show>
           <Panel>
             <Button onClick={() => portalService.send("START")}>
               {t("start")}
@@ -76,7 +77,7 @@ const BumpkinFightClub: React.FC = () => {
       )}
 
       {portalState.matches("rules") && (
-        <Modal centered show>
+        <Modal show>
           <Panel bumpkinParts={NPC_WEARABLES.wizard}>
             <Rules onAcknowledged={() => portalService.send("CONTINUE")} />
           </Panel>
@@ -84,7 +85,7 @@ const BumpkinFightClub: React.FC = () => {
       )}
 
       {portalState.matches("claiming") && (
-        <Modal centered show>
+        <Modal show>
           <Panel>
             <p className="loading">{t("loading")}</p>
           </Panel>
@@ -92,7 +93,7 @@ const BumpkinFightClub: React.FC = () => {
       )}
 
       {portalState.matches("completed") && (
-        <Modal centered show>
+        <Modal show>
           <Panel bumpkinParts={NPC_WEARABLES.wizard}>
             <div className="p-2">
               <p className="mb-2">

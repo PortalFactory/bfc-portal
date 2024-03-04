@@ -7,6 +7,12 @@ export type SpawnLocation = Record<
 >;
 
 export const SPAWNS: SpawnLocation = {
+  bumpkin_fight_club: {
+    default: {
+      x: 265,
+      y: 830,
+    },
+  },
   crop_boom: {
     default: {
       x: 220,

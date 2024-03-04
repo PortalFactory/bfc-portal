@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Modal } from "react-bootstrap";
 
 import levelIcon from "assets/icons/level_up.png";
 
+import { Modal } from "components/ui/Modal";
 import { BumpkinParts } from "lib/utils/tokenUriBuilder";
 import { PIXEL_SCALE } from "features/game/lib/constants";
 import { getBumpkinLevel } from "features/game/lib/level";
@@ -46,7 +46,7 @@ export const PlayerModal: React.FC = () => {
 
   return (
     <>
-      <Modal show={!!player} centered onHide={closeModal}>
+      <Modal show={!!player} onHide={closeModal}>
         <CloseButtonPanel onClose={closeModal} bumpkinParts={player?.clothing}>
           <div className="flex items-center ml-1 mt-2 mb-4">
             <img
@@ -58,7 +58,7 @@ export const PlayerModal: React.FC = () => {
             />
             <div>
               <p className="text-base">
-                Level {getBumpkinLevel(player?.experience ?? 0)}
+                {"Level"} {getBumpkinLevel(player?.experience ?? 0)}
               </p>
               {/* Progress bar */}
               <BumpkinLevel experience={player?.experience} />
@@ -66,7 +66,8 @@ export const PlayerModal: React.FC = () => {
 
             {player?.id && (
               <div className="flex-auto self-start text-right text-xs mr-3 f-10">
-                #{player?.id}
+                {"#"}
+                {player?.id}
               </div>
             )}
           </div>

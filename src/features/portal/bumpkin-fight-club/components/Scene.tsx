@@ -5,7 +5,6 @@ import { Player } from "features/world/types/Room";
 import { interactableModalManager } from "features/world/ui/InteractableModals";
 import { BumpkinContainer } from "features/world/containers/BumpkinContainer";
 import { NPCName } from "lib/npcs";
-import { hasFeatureAccess } from "lib/flags";
 
 import mapJson from "assets/bumpkin-fight-club/map.json";
 
@@ -58,8 +57,8 @@ export class PortalScene extends BaseScene {
     }
   }
 
-  update(time: number, delta: number) {
-    super.update(time, delta);
+  update() {
+    super.update();
 
     this.updatePower();
   }
@@ -172,10 +171,7 @@ export class PortalScene extends BaseScene {
 
           // Change scenes
           const warpTo = (obj2 as any).data?.list?.warp;
-          if (
-            warpTo &&
-            (warpTo !== "beach" || hasFeatureAccess(this.gameState, "BEACH"))
-          ) {
+          if (warpTo) {
             this.currentPlayer?.stopSpeaking();
             this.cameras.main.fadeOut(1000);
 
